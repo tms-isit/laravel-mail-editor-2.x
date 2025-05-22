@@ -5,6 +5,7 @@ namespace Qoraiche\MailEclipse;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Qoraiche\MailEclipse\Command\VendorPublishCommand;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class MailEclipseServiceProvider extends ServiceProvider
 {
@@ -48,7 +49,7 @@ class MailEclipseServiceProvider extends ServiceProvider
     {
         return [
             'namespace' => 'Qoraiche\MailEclipse\Http\Controllers',
-            'prefix' => config('maileclipse.path'),
+            'prefix' => LaravelLocalization::setLocale() . '/' . config('maileclipse.path'),
             'middleware' => 'maileclipse',
         ];
     }

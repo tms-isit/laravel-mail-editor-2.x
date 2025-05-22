@@ -5,6 +5,7 @@ namespace Qoraiche\MailEclipse\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
+use App\Models\General\EmailTemplate;
 use Qoraiche\MailEclipse\MailEclipse;
 
 class MailablesController extends Controller

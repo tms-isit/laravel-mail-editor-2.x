@@ -42,6 +42,8 @@
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="{{ asset('vendor/maileclipse/js/maileclipse-app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </head>
 

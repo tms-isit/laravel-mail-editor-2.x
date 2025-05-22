@@ -2,7 +2,7 @@
 
 namespace Qoraiche\MailEclipse;
 
-use App\EmailTemplate;
+use App\Models\General\EmailTemplate;
 use ErrorException;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
@@ -251,7 +251,7 @@ class MailEclipse
         return response()->json([
 
             'status' => 'error',
-            'message' => 'Template not created',
+            'message' => __('Template name already exists'),
 
         ]);
     }

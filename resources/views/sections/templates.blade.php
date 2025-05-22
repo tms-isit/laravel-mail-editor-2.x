@@ -72,46 +72,60 @@
 
 <script type="text/javascript">
 
-    $('.remove-item').click(function(){
-        var templateSlug = $(this).data('template-slug');
-        var templateName = $(this).data('template-name');
+    $('.remove-item').click(function () {
+    var templateSlug = $(this).data('template-slug');
+    var templateName = $(this).data('template-name');
 
-    notie.confirm({
+    Swal.fire({
+        title: 'Are you sure?',
+        html: 'Delete Template <b>' + templateName + '</b>?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post('{{ route('deleteTemplate') }}', {
+                templateslug: templateSlug,
+            })
+            .then(function (response) {
+                if (response.data.status === 'ok') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: 'Template deleted successfully',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
 
-        text: 'Are you sure you want to do that?<br>Delete Template <b>'+ templateName +'</b>',
+                    jQuery('tr#template_item_' + templateSlug).fadeOut('slow');
 
-    submitCallback: function () {
+                    let tbody = $("#templates_list tbody");
 
-    axios.post('{{ route('deleteTemplate') }}', {
-        templateslug: templateSlug,
-    })
-    .then(function (response) {
+                    if (tbody.children().length <= 1) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }
 
-        if (response.data.status == 'ok'){
-            notie.alert({ type: 1, text: 'Template deleted', time: 2 });
-
-            jQuery('tr#template_item_' + templateSlug).fadeOut('slow');
-
-            var tbody = $("#templates_list tbody");
-
-            console.log(tbody.children().length);
-
-            if (tbody.children().length <= 1) {
-                location.reload();
-            }
-
-        } else {
-            notie.alert({ type: 'error', text: 'Template not deleted', time: 2 })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Not deleted',
+                        text: 'Template could not be deleted',
+                    });
+                }
+            })
+            .catch(function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                });
+            });
         }
-    })
-    .catch(function (error) {
-        notie.alert({ type: 'error', text: error, time: 2 })
     });
-
-  }
-})
-
-    });
+});
 
 
                 
