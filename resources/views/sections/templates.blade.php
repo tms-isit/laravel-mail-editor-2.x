@@ -23,10 +23,10 @@
         
         <div class="card-body">
             @if ($templates->isEmpty())
-                <div class="text-center py-10">
+                @component('maileclipse::layout.emptydata')
                     <span class="d-block mb-4">{{ __("maileclipse::template.We didn't find anything - just empty space.") }}</span>
                     <a class="btn btn-primary" href="{{ route('selectNewTemplate') }}">{{ __('maileclipse::template.Add New Template') }}</a>
-                </div>
+                @endcomponent
             @else
                 <div class="table-responsive">
                     <table class="table" id="datatables">
