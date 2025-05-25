@@ -1,10 +1,119 @@
+@php
+    $pageTitle = __('maileclipse::template.edit templates');
+@endphp
+
 @extends('maileclipse::layout.app')
 
 @section('title', 'Edit Template ' . ucfirst($template['name']))
 
 @section('content')
 
-    <style type="text/css">
+    <div class="col-lg-12 col-md-12">
+       
+        <div class="container">
+            <div class="row my-4">
+                <div class="col-12 mb-2 d-block d-lg-none">
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0 dropdown-toggle" style="cursor: pointer;" data-toggle="collapse"
+                                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    {{ __('maileclipse::template.details') }}
+                                </h5>
+                            </div>
+
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                data-parent="#accordion">
+                                <div class="card-body">
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.name') }}:</b>
+                                        {{ ucfirst($template['name']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.slug') }}:</b>
+                                        {{ $template['slug'] }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.description') }}:</b>
+                                        {{ $template['description'] }}</p>
+
+                                    {{-- <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.template view') }}:</b>
+                                        {{ 'maileclipse::templates.' . $template['slug'] }}</p> --}}
+
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.type') }}:</b>
+                                        {{ ucfirst($template['template_type']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.template name') }}:</b>
+                                        {{ ucfirst($template['template_view_name']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.details') }}:</b>
+                                        {{ ucfirst($template['template_skeleton']) }}</p>
+                                    <p class="text-primary edit-template" style="cursor:pointer;"><i
+                                            class="fas fa-edit"></i> {{ __('maileclipse::template.edit details') }}</p>
+                                    <p class="text-danger delete-template" style="cursor:pointer;"><i
+                                            class="fas fa-trash "></i> {{ __('maileclipse::template.delete template') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12">
+                    <div class="card mb-2">
+                        <div class="card-header p-3" style="border-bottom:1px solid #e7e7e7e6;">
+                            <button type="button" class="btn btn-success float-right save-template">{{ __('maileclipse::template.update') }}</button>
+                            <button type="button" class="btn btn-secondary float-right preview-toggle mr-2"><i
+                                    class="far fa-eye"></i> {{ __('maileclipse::template.preview') }}</button>
+                            <button type="button" class="btn btn-light float-right mr-2 save-draft disabled">{{ __('maileclipse::template.save') }}
+                                {{ __('maileclipse::template.draft') }}</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+
+                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                                    role="tab" aria-controls="pills-home" aria-selected="true">{{ __('maileclipse::template.editor') }}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                aria-labelledby="pills-home-tab">
+                                <textarea id="template_editor" cols="30" rows="10">{{ $template['template'] }}</textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-3 d-none d-lg-block">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>{{__('maileclipse::template.details')}}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.name') }}:</b>
+                                        {{ ucfirst($template['name']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.slug') }}:</b>
+                                        {{ $template['slug'] }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.description') }}:</b>
+                                        {{ $template['description'] }}</p>
+
+                                    {{-- <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.template view') }}:</b>
+                                        {{ 'maileclipse::templates.' . $template['slug'] }}</p> --}}
+
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.template type') }}:</b>
+                                        {{ ucfirst($template['template_type']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.template name') }}:</b>
+                                        {{ ucfirst($template['template_view_name']) }}</p>
+                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.details') }}:</b>
+                                        {{ ucfirst($template['template_skeleton']) }}</p>
+                                    <p class="text-primary edit-template" style="cursor:pointer;"><i
+                                            class="fas fa-edit"></i> {{ __('maileclipse::template.edit details') }}</p>
+                                    <p class="text-danger delete-template" style="cursor:pointer;"><i
+                                            class="fas fa-trash "></i> {{ __('maileclipse::template.delete template') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @endsection
+@section('page-js')
+ <style type="text/css">
         .CodeMirror {
             height: 400px;
         }
@@ -37,115 +146,9 @@
             cursor: pointer;
         }
     </style>
-
-    <div class="col-lg-12 col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('templateList') }}">Templates</a></li>
-                <li class="breadcrumb-item active">{{ ucfirst($template['name']) }}</li>
-            </ol>
-        </nav>
-        <div class="container">
-            <div class="row my-4">
-                <div class="col-12 mb-2 d-block d-lg-none">
-                    <div id="accordion">
-                        <div class="card">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0 dropdown-toggle" style="cursor: pointer;" data-toggle="collapse"
-                                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Details
-                                </h5>
-                            </div>
-
-                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                data-parent="#accordion">
-                                <div class="card-body">
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Name:</b>
-                                        {{ ucfirst($template['name']) }}</p>
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Slug:</b>
-                                        {{ $template['slug'] }}</p>
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Description:</b>
-                                        {{ $template['description'] }}</p>
-
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template View:</b>
-                                        {{ 'maileclipse::templates.' . $template['slug'] }}</p>
-
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Type:</b>
-                                        {{ ucfirst($template['template_type']) }}</p>
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Name:</b>
-                                        {{ ucfirst($template['template_view_name']) }}</p>
-                                    <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Skeleton:</b>
-                                        {{ ucfirst($template['template_skeleton']) }}</p>
-                                    <p class="text-primary edit-template" style="cursor:pointer;"><i
-                                            class="fas fa-edit"></i> Edit Details</p>
-                                    <p class="text-danger delete-template" style="cursor:pointer;"><i
-                                            class="fas fa-trash "></i> Delete Template</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9 col-md-12">
-                    <div class="card mb-2">
-                        <div class="card-header p-3" style="border-bottom:1px solid #e7e7e7e6;">
-                            <button type="button" class="btn btn-success float-right save-template">Update</button>
-                            <button type="button" class="btn btn-secondary float-right preview-toggle mr-2"><i
-                                    class="far fa-eye"></i> Preview</button>
-                            <button type="button" class="btn btn-light float-right mr-2 save-draft disabled">Save
-                                Draft</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-
-                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                                    role="tab" aria-controls="pills-home" aria-selected="true">Editor</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                                aria-labelledby="pills-home-tab">
-                                <textarea id="template_editor" cols="30" rows="10">{{ $template['template'] }}</textarea>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-lg-3 d-none d-lg-block">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Details</h5>
-                        </div>
-                        <div class="card-body">
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Name:</b>
-                                {{ ucfirst($template['name']) }}</p>
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Slug:</b> {{ $template['slug'] }}
-                            </p>
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Description:</b>
-                                {{ $template['description'] }}</p>
-
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template View:</b>
-                                {{ 'maileclipse::templates.' . $template['slug'] }}</p>
-
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Type:</b>
-                                {{ ucfirst($template['template_type']) }}</p>
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Name:</b>
-                                {{ ucfirst($template['template_view_name']) }}</p>
-                            <p style="font-size: .9em;"><b class="font-weight-sixhundred">Template Skeleton:</b>
-                                {{ ucfirst($template['template_skeleton']) }}</p>
-                            <p class="text-primary edit-template" style="cursor:pointer;"><i class="fas fa-edit"></i> Edit
-                                Details</p>
-                            <span class="text-danger delete-template" style="cursor:pointer;"><i class="fas fa-trash "></i>
-                                Delete Template</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @endsection
+    @push('scripts')
+        
     <script type="text/javascript">
         $(document).ready(function() {
 
@@ -660,4 +663,4 @@
         });
     </script>
 
-@endsection
+@endpush

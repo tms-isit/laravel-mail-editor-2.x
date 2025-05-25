@@ -1,10 +1,57 @@
+@php
+    $pageTitle = __('maileclipse::template.Create Template');
+@endphp
+
 @extends('maileclipse::layout.app')
 
-@section('title', 'Create Template')
 
 @section('content')
+    <div class="col-lg-12 col-md-12">
+        <div class="container">
+            <div class="row my-4">
 
-    <style type="text/css">
+                <div class="col-md-12">
+
+                    <div class="card mb-2">
+                        <div class="card-header p-3" style="border-bottom:1px solid #e7e7e7e6;">
+                            <button type="button" class="btn btn-primary float-right save-template">{{__('maileclipse::template.create')}}</button>
+                            <button type="button" class="btn btn-secondary float-right preview-toggle mr-2"><i
+                                    class="far fa-eye"></i> {{__('maileclipse::template.preview')}}</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+
+                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                                    role="tab" aria-controls="pills-home" aria-selected="true">{{__('maileclipse::template.editor')}}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
+                                    role="tab" aria-controls="pills-profile" aria-selected="false">{{__('maileclipse::template.Plain Text')}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                aria-labelledby="pills-home-tab">
+                                <textarea id="template_editor" cols="30" rows="10">{{ $skeleton['template'] }}</textarea>
+                            </div>
+                            <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                                aria-labelledby="pills-profile-tab">
+                                <textarea id="plain_text" cols="30" rows="10"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('page-css')
+   <style type="text/css">
         .CodeMirror {
             height: 400px;
         }
@@ -39,57 +86,9 @@
 
     </style>
 
-    <div class="col-lg-12 col-md-12">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('templateList') }}">Templates</a></li>
-                <li class="breadcrumb-item active">{{ ucfirst($skeleton['type']) }}</li>
-                <li class="breadcrumb-item active">{{ ucfirst($skeleton['name']) }}</li>
-                <li class="breadcrumb-item active" aria-current="page">{{ ucfirst($skeleton['skeleton']) }}</li>
-            </ol>
-        </nav>
-        <div class="container">
-            <div class="row my-4">
+@endsection
 
-                <div class="col-md-12">
-
-                    <div class="card mb-2">
-                        <div class="card-header p-3" style="border-bottom:1px solid #e7e7e7e6;">
-                            <button type="button" class="btn btn-primary float-right save-template">Create</button>
-                            <button type="button" class="btn btn-secondary float-right preview-toggle mr-2"><i
-                                    class="far fa-eye"></i> Preview</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-
-                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                                    role="tab" aria-controls="pills-home" aria-selected="true">Editor</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
-                                    role="tab" aria-controls="pills-profile" aria-selected="false">Plain Text</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                                aria-labelledby="pills-home-tab">
-                                <textarea id="template_editor" cols="30" rows="10">{{ $skeleton['template'] }}</textarea>
-                            </div>
-                            <div class="tab-pane fade" id="pills-profile" role="tabpanel"
-                                aria-labelledby="pills-profile-tab">
-                                <textarea id="plain_text" cols="30" rows="10"></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+@push('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
 
@@ -346,119 +345,125 @@
             @endif
 
 
-            $('.save-template').click(async function() {
-                // Step 1: Get template name
-                const {
-                    value: templateName
-                } = await Swal.fire({
-                    title: 'Enter Template Name',
-                    input: 'text',
-                    inputPlaceholder: 'e.g. Weekly Newsletter',
-                    inputValidator: (value) => {
-                        if (!value) return 'Template name is required';
-                        if (/[^a-zA-Z0-9 ]/.test(value))
-                        return 'Only letters, numbers, and spaces are allowed';
-                    },
-                    showCancelButton: true
+         $('.save-template').click(async function() {
+    // Step 1: Get template name
+    const {
+        value: templateName
+    } = await Swal.fire({
+        title: '{{ __("maileclipse::template.enter_template_name_title") }}',
+        input: 'text',
+        inputPlaceholder: '{{ __("maileclipse::template.template_name_placeholder") }}',
+        inputValidator: (value) => {
+            if (!value) return '{{ __("maileclipse::template.template_name_required") }}';
+            if (/[^a-zA-Z0-9 ]/.test(value))
+            return '{{ __("maileclipse::template.template_name_validation") }}';
+        },
+        showCancelButton: true,
+        confirmButtonText: '{{ __("maileclipse::template.confirm_button") }}',
+        cancelButtonText: '{{ __("maileclipse::template.cancel_button") }}'
+    });
+
+    if (!templateName) return;
+
+    // Step 2: Get template description
+    const {
+        value: templateDescription
+    } = await Swal.fire({
+        title: '{{ __("maileclipse::template.enter_template_description_title") }}',
+        input: 'text',
+        inputPlaceholder: '{{ __("maileclipse::template.template_description_placeholder") }}',
+        inputValidator: (value) => {
+            if (!value) return '{{ __("maileclipse::template.template_description_required") }}';
+            if (/[^a-zA-Z0-9 ]/.test(value))
+            return '{{ __("maileclipse::template.template_description_validation") }}';
+        },
+        showCancelButton: true,
+        confirmButtonText: '{{ __("maileclipse::template.confirm_button") }}',
+        cancelButtonText: '{{ __("maileclipse::template.cancel_button") }}'
+    });
+
+    if (!templateDescription) return;
+
+    // Step 3: Select language
+    const {
+        value: lang
+    } = await Swal.fire({
+        title: '{{ __("maileclipse::template.select_language_title") }}',
+        input: 'select',
+        inputOptions: {
+            en: '{{ __("maileclipse::template.english") }}',
+            ar: '{{ __("maileclipse::template.arabic") }}'
+        },
+        inputPlaceholder: '{{ __("maileclipse::template.select_language_placeholder") }}',
+        showCancelButton: true,
+        confirmButtonText: '{{ __("maileclipse::template.confirm_button") }}',
+        cancelButtonText: '{{ __("maileclipse::template.cancel_button") }}',
+        inputValidator: (value) => {
+            if (!value) return '{{ __("maileclipse::template.language_selection_required") }}';
+        }
+    });
+
+    if (!lang) return;
+
+    // Prepare post data
+    let postData;
+
+    @if ($skeleton['type'] === 'markdown')
+        postData = {
+            content: simplemde.codemirror.getValue(),
+            plain_text: plaintextEditor.getValue(),
+            template_name: templateName,
+            template_description: templateDescription,
+            lang: lang,
+            template_view_name: '{{ $skeleton['name'] }}',
+            template_type: '{{ $skeleton['type'] }}',
+            template_skeleton: '{{ $skeleton['skeleton'] }}',
+        };
+    @else
+        postData = {
+            content: tinymce.get('template_editor').getContent(),
+            plain_text: plaintextEditor.getValue(),
+            template_name: templateName,
+            template_description: templateDescription,
+            lang: lang,
+            template_view_name: '{{ $skeleton['name'] }}',
+            template_type: '{{ $skeleton['type'] }}',
+            template_skeleton: '{{ $skeleton['skeleton'] }}',
+        };
+    @endif
+
+    // Send via axios
+    axios.post('{{ route('createNewTemplate') }}', postData)
+        .then(function(response) {
+            if (response.data.status === 'ok') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '{{ __("maileclipse::template.template_created_title") }}',
+                    html: response.data.message,
+                    timer: 2000,
+                    showConfirmButton: false
                 });
 
-                if (!templateName) return;
-
-                // Step 2: Get template description
-                const {
-                    value: templateDescription
-                } = await Swal.fire({
-                    title: 'Enter Template Description',
-                    input: 'text',
-                    inputPlaceholder: 'e.g. Description of the template',
-                    inputValidator: (value) => {
-                        if (!value) return 'Template description is required';
-                        if (/[^a-zA-Z0-9 ]/.test(value))
-                        return 'Only letters, numbers, and spaces are allowed';
-                    },
-                    showCancelButton: true
+                setTimeout(function() {
+                    window.location.replace(response.data.template_url);
+                }, 1000);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '{{ __("maileclipse::template.error_title") }}',
+                    text: response.data.message
                 });
-
-                if (!templateDescription) return;
-
-                // Step 3: Select language
-                const {
-                    value: lang
-                } = await Swal.fire({
-                    title: 'Select Language',
-                    input: 'select',
-                    inputOptions: {
-                        en: 'English',
-                        ar: 'Arabic'
-                    },
-                    inputPlaceholder: 'Select a language',
-                    showCancelButton: true,
-                    inputValidator: (value) => {
-                        if (!value) return 'Language selection is required';
-                    }
-                });
-
-                if (!lang) return;
-
-                // Prepare post data
-                let postData;
-
-                @if ($skeleton['type'] === 'markdown')
-                    postData = {
-                        content: simplemde.codemirror.getValue(),
-                        plain_text: plaintextEditor.getValue(),
-                        template_name: templateName,
-                        template_description: templateDescription,
-                        lang: lang,
-                        template_view_name: '{{ $skeleton['name'] }}',
-                        template_type: '{{ $skeleton['type'] }}',
-                        template_skeleton: '{{ $skeleton['skeleton'] }}',
-                    };
-                @else
-                    postData = {
-                        content: tinymce.get('template_editor').getContent(),
-                        plain_text: plaintextEditor.getValue(),
-                        template_name: templateName,
-                        template_description: templateDescription,
-                        lang: lang,
-                        template_view_name: '{{ $skeleton['name'] }}',
-                        template_type: '{{ $skeleton['type'] }}',
-                        template_skeleton: '{{ $skeleton['skeleton'] }}',
-                    };
-                @endif
-
-                // Send via axios
-                axios.post('{{ route('createNewTemplate') }}', postData)
-                    .then(function(response) {
-                        if (response.data.status === 'ok') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Template Created',
-                                html: response.data.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-
-                            setTimeout(function() {
-                                window.location.replace(response.data.template_url);
-                            }, 1000);
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.data.message
-                            });
-                        }
-                    })
-                    .catch(function(error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Request Failed',
-                            text: error.response?.data?.message ||
-                                'An error occurred while saving the template.'
-                        });
-                    });
+            }
+        })
+        .catch(function(error) {
+            Swal.fire({
+                icon: 'error',
+                title: '{{ __("maileclipse::template.request_failed_title") }}',
+                text: error.response?.data?.message ||
+                    '{{ __("maileclipse::template.default_error_message") }}'
             });
+        });
+});
 
 
 
@@ -471,5 +476,7 @@
 
         });
     </script>
+@endpush
 
-@endsection
+
+

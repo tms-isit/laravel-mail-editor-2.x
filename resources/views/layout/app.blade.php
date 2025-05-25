@@ -1,75 +1,116 @@
-<!doctype html>
-<html lang="en">
+@include('layouts.layout_1.layout_header')
+@php $SelectedRole = \Session::get('role'); @endphp
 
-<head>
-    <title>MailEclipse - @yield('title')</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,800,800i,900,900i" rel="stylesheet">
-    <!-- Custom built theme - This already includes Bootstrap 4 -->
-    <link rel="stylesheet" href="{{ asset('vendor/maileclipse/css/maileclipse-app.min.css') }}">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
-    <!-- Bootstrap & jquery & lodash & popper & lozad -->
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
-    <!-- Notie Library -->
-    <script src="https://unpkg.com/notie"></script>
+ 
+
+<body id="kt_body"
+    class="header-mobile-fixed subheader-enabled aside-enabled aside-fixed subheader-fixed header-fixed aside-secondary-enabled kt-primary--minimize h-100">
+    <!--begin::Main-->
+    <!--begin::Header Mobile-->
+    @include('layouts.layout_1.elements.header_mobile')
+    <!--end::Header Mobile-->
+    <div class="d-flex flex-column flex-root">
+        <!--begin::Page-->
+        <div class="d-flex flex-row flex-column-fluid page">
+            <!--begin::Aside-->
+            @include('layouts.layout_1.elements.sideMenue')
+            <!--end::Aside-->
+            <!--begin::Wrapper-->
+            <div class="d-flex flex-column flex-row-fluid wrapper h-100" id="kt_wrapper">
+                <!--begin::header-->
+                @include('layouts.layout_1.elements.header')
+                <!--end::header-->
+
+                <!--begin::Content-->
+                <div class="content d-flex flex-column flex-column-fluid kt_content_layout" id="kt_content">
+                    <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
+                        <div
+                            class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+                            <!--begin::Info-->
+                            <div class="d-flex align-items-center flex-wrap mr-2">
+                                <!--begin::Page Title-->
+                                <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">
+                                    {{ isset($pageTitle) ? $pageTitle : '' }}
+                                </h5>
+                                @include('common.shared.breadcrumbs')
+                                <!--end::Page Title-->
+                            </div>
+                            <!--end::Info-->
+                            <!--begin::Toolbar-->
+                            <div class="d-flex align-items-center">
+                                @yield('subheader-info')
+                                @if (url()->previous() != url()->current())
+                                    <a class="btn btn-light-warning ml-3"
+                                        href="{{ url()->previous() }}">{{ __('adminstration.back') }}</a>
+                                @endif
+                            </div>
+                            <!--end::Toolbar-->
+                        </div>
+                    </div>
+                    <!--begin::Container-->
+                    @yield('pre-content')
+                    <div class="container container_layout h-100 mt-3" id="container_layout">
+                        <!--begin::Page Content-->
+                        @yield('content')
+                        <!--end::Page Content-->
+                    </div>
+                </div>
+
+                @include('layouts.layout_1.elements.footer')
+            </div>
+
+        </div>
+        @include('layouts.layout_1.elements.userpanel')
+        @if (in_array($SelectedRole, App\Models\Nomination\Request::EXTERNAL_ROLES))
+            @include('layouts.layout_1.elements.internal-cart',[
+                'menu_id'=>'kt_second_quick_cart',
+                'close_btn_id'=>'kt_second_quick_cart_close',
+                'nominationCartItems'=>Auth::user()->nominationCartCourseItems,
+                'title'=> __('nomination.layout.header.short_courses'),
+                'type' => 'short_courses',
+                'items_container_id'=>'internal-cart-body',
+                'cart_items_count_id' => 'internal-cart-items-count',
+                'cart_seats_count_id' => 'internal-cart-seats-count',
+                'show_groups_count' => true,
+                'show_courses_count' => false,
+                'cart_groups_count_id' => 'internal-cart-groups-count',
+                'submit_btn_id' => 'internal-cart-submit-btn'
+            ])
+            @include('layouts.layout_1.elements.internal-cart',[
+                'menu_id'=>'kt_quick_cart',
+                'close_btn_id'=>'kt_quick_cart_close',
+                'nominationCartItems'=>Auth::user()->nominationCartEnrolmentPolicyItems,
+                'title'=> __('nomination.listing.scheduled_training_programs'),
+                'type' => 'scheduled_training_programs',
+                'items_container_id'=>'internal-enrolment-cart-body',
+                'cart_items_count_id' => 'internal-enrolment-cart-items-count',
+                'cart_seats_count_id' => 'internal-enrolment-cart-seats-count',
+                'show_groups_count' => false,
+                'show_courses_count' => true,
+                'cart_groups_count_id' => 'internal-enrolment-cart-groups-count',
+                'submit_btn_id' => 'internal-enrolment-cart-submit-btn'
+            ])
+        @endif
+        @include('layouts.layout_1.elements.quick_tabs_settings_notification_panel')
+
+
+    </div>
+
+    <script  src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.0/tinymce.min.js"></script>
     <!-- Axios Library -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     @if ( request()->route()->getName() === 'newTemplate' ||
           request()->route()->getName() === 'editMailable' || 
           request()->route()->getName() === 'viewTemplate')
-<!-- Editor Markdown/Html/Text -->
+    <!--  Editor Markdown/Html/Text -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.js"></script>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.0/tinymce.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/xml/xml.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/css/css.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/javascript/javascript.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/htmlmixed/htmlmixed.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/display/placeholder.js"></script>
     @endif
 
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{{ asset('vendor/maileclipse/js/maileclipse-app.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-</head>
-
-<body>
-
-    @include('maileclipse::layout.header')
-        
-    <div class="container mt-5">
-        <div class="row">
-
-            @if ( request()->route()->getName() !== 'newTemplate' && 
-                  request()->route()->getName() !== 'editMailable' &&
-                  request()->route()->getName() !== 'viewTemplate'
-                )
-
-                @include('maileclipse::layout.sidebar')
-
-            @endif
-
-            @yield('content')
-            
-
-        </div>
-        @include('maileclipse::layout.footer')
-    </div>
-
+    @yield('script')
+    @yield('studio-script')
+    @stack('scripts')
+    @yield('js')
 </body>
-
 </html>
