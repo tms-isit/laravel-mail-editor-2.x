@@ -223,7 +223,9 @@ class MailEclipse
         }
 
         $templatename = Str::camel(preg_replace('/\s+/', '_', $request->template_name));
-        $existing = self::getTemplates()->contains('template_slug', '=', $templatename);
+        $existing = self::getTemplates()->where('template_slug', $templatename)
+        ->where('lang' ,$request->lang)->isNotEmpty();
+
 
           if (! $existing) {
            EmailTemplate::insert([
