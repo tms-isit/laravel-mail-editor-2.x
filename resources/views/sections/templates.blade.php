@@ -2,8 +2,7 @@
     $pageTitle = __('maileclipse::template.email_templates');
 @endphp
 
-@extends('maileclipse::layout.app')
-
+@extends(Auth::user()->layout)
 
 
 @section('content')
@@ -81,6 +80,7 @@
 @endsection
 
 @push('scripts')
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         $('.remove-item').click(function() {
             var templateSlug = $(this).data('template-slug');
@@ -109,14 +109,6 @@
                                 });
 
                                 jQuery('tr#template_item_' + templateSlug).fadeOut('slow');
-
-                                let tbody = $("#templates_list tbody");
-
-                                if (tbody.children().length <= 1) {
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 2000);
-                                }
 
                             } else {
                                 Swal.fire({

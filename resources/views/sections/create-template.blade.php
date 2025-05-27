@@ -2,7 +2,7 @@
     $pageTitle = __('maileclipse::template.Create Template');
 @endphp
 
-@extends('maileclipse::layout.app')
+@extends(Auth::user()->layout)
 
 
 @section('content')
@@ -21,7 +21,6 @@
                     </div>
 
                     <div class="card">
-
                         <ul class="nav nav-pills" id="pills-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
@@ -51,6 +50,8 @@
 @endsection
 
 @section('page-css')
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+ <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.css">
    <style type="text/css">
         .CodeMirror {
             height: 400px;
@@ -89,6 +90,16 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('mailTemplate/tinymce/js/tinymce/tinymce.min.js') }}" defer></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/xml/xml.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/css/css.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/javascript/javascript.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/display/placeholder.js"></script>
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
 
@@ -464,9 +475,6 @@
             });
         });
 });
-
-
-
 
             var plaintextEditor = CodeMirror.fromTextArea(document.getElementById("plain_text"), {
                 lineNumbers: false,

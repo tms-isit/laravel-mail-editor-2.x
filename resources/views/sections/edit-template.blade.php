@@ -598,12 +598,12 @@
 
                 $('.save-template').click(function() {
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "Do you want to update the template?",
+                        title: '{{ __('maileclipse::template.update confirmation') }}',
+                        html: '{{ __('maileclipse::template.update confirmation text') }}',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Yes, update it!',
-                        cancelButtonText: 'Cancel',
+                        confirmButtonText: '{{ __('maileclipse::template.update') }}',
+                        cancelButtonText: '{{ __('maileclipse::template.cancel') }}',
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -617,7 +617,7 @@
                                         Swal.fire({
                                             icon: 'success',
                                             title: 'Updated!',
-                                            text: 'Template updated successfully.',
+                                            text: '{{ __('maileclipse::template.template updated') }}',
                                             timer: 3000,
                                             showConfirmButton: false
                                         });
@@ -627,7 +627,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error!',
-                                            text: 'Template not updated.',
+                                            text: '{{ __('maileclipse::template.template not updated') }}',
                                             timer: 3000,
                                             showConfirmButton: false
                                         });
@@ -637,7 +637,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: 'Something went wrong.',
+                                        text: '{{ __('maileclipse::template.error occurred') }}',
                                         timer: 3000,
                                         showConfirmButton: false
                                     });
@@ -645,6 +645,7 @@
                         }
                     });
                 });
+
 
 
                 $('.save-draft').click(function() {

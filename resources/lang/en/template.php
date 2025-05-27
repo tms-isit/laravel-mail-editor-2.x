@@ -67,4 +67,9 @@ return [
     'default_error_message' => 'An error occurred while saving the template.',
     'confirm_button' => 'OK',
     'cancel_button' => 'Cancel',
+    'update confirmation' => 'Are you sure you want to update this template?',
+    'update confirmation title' => 'Update Template',
+    'template updated' => 'Template updated successfully',
+    'template not updated' => 'Template could not be updated',
+    'error occurred' => 'An error occurred while updating the template.',
 ];

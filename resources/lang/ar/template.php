@@ -69,4 +69,9 @@ return [
     'default_error_message' => 'حدث خطأ أثناء حفظ القالب.',
     'confirm_button' => 'موافق',
     'cancel_button' => 'إلغاء',
+    'update confirmation' => 'هل أنت متأكد من تحديث القالب؟',
+    'update confirmation text' => 'سيتم تحديث القالب',
+    'template updated' => 'تم تحديث القالب بنجاح',
+    'template not updated' => 'تعذر تحديث القالب',
+    'error occurred' => 'حدث خطأ أثناء تحديث القالب. يرجى المحاولة مرة أخرى.',
 ];

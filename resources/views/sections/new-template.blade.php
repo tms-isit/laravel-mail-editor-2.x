@@ -2,14 +2,12 @@
     $pageTitle = __('maileclipse::template.Add Template');
 @endphp
 
-@extends('maileclipse::layout.app')
+@extends(Auth::user()->layout)
 
 
 @section('editor', true)
 
 @section('content')
-
-
         <div class="card mb-3">
             <ul class="nav nav-pills" id="pills-tab" role="tablist">
                 <li class="nav-item">
@@ -34,18 +32,17 @@
                                     <div class="content template-item" data-toggle="modal"
                                         data-target="#select{{ $name }}Modal">
                                         <div class="content-overlay"></div>
-
-                                        @if (file_exists(public_path("vendor/maileclipse/images/skeletons/html/{$name}.png")))
+                                        @if (file_exists(public_path("mailTemplate/skeletons/html/{$name}.png")))
                                             <img class="content-image card-img-top"
-                                                src="{{ asset('vendor/maileclipse/images/skeletons/html/' . $name . '.png') }}"
+                                                src="{{ asset('mailTemplate/skeletons/html/' . $name . '.png') }}"
                                                 alt="{{ $name }}">
-                                        @elseif(file_exists(public_path("vendor/maileclipse/images/skeletons/html/{$name}.jpg")))
+                                        @elseif(file_exists(public_path("mailTemplate/skeletons/html/{$name}.jpg")))
                                             <img class="content-image card-img-top"
-                                                src="{{ asset('vendor/maileclipse/images/skeletons/html/' . $name . '.jpg') }}"
+                                                src="{{ asset('mailTemplate/skeletons/html/' . $name . '.jpg') }}"
                                                 alt="{{ $name }}">
                                         @else
                                             <img class="content-image card-img-top"
-                                                src="{{ asset('vendor/maileclipse/images/skeletons/no-image.png') }}"
+                                                src="{{ asset('mailTemplate/skeletons/no-image.png') }}"
                                                 alt="{{ $name }}">
                                         @endif
 
@@ -164,4 +161,29 @@
             {{-- </div> --}}
         </div>
 
+@endsection
+
+@section('page-css')
+<style>
+ .template-item {
+            position: relative;
+        }
+ 
+        .content-details {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            background: rgb(66, 133, 244);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 0;
+        }
+ 
+        .template-item:hover .content-details {
+            opacity: 0.8;
+        }
+</style>
 @endsection
