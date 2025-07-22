@@ -64,21 +64,27 @@ class MailablesController extends Controller
     public function parseTemplate(Request $request)
     {
         $template = $request->has('template') ? $request->template : false;
-
-        $viewPath = $request->has('template') ? $request->viewpath : base64_decode($request->viewpath);
+        $slug = $request->viewpath;
+        $isTemplate = $request->boolean('template');
+        $markdown = preg_replace('/((?!{{.*?-)(&gt;)(?=.*?}}))/', '>', $request->markdown);
 
         // ref https://regexr.com/4dflu
         $bladeRenderable = preg_replace('/((?!{{.*?-)(&gt;)(?=.*?}}))/', '>', $request->markdown);
 
-        if (MailEclipse::markdownedTemplateToView(true, $bladeRenderable, $viewPath, $template)) {
-            return response()->json([
-                'status' => 'ok',
-            ]);
+        if ($isTemplate) {
+        $template = EmailTemplate::where('template_slug', $slug)->first();
+
+        if ($template) {
+            $template->template = $markdown;
+            $template->save();
+
+            return response()->json(['status' => 'ok']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Template not found'], 404);
+        }
         }
 
-        return response()->json([
-            'status' => 'error',
-        ]);
+        return response()->json(['status' => 'error', 'message' => 'Invalid request'], 400);
     }
 
     public function previewMarkdownView(Request $request)

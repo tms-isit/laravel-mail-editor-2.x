@@ -21,6 +21,7 @@ use ReeceM\Mocker\Mocked;
 use ReflectionClass;
 use ReflectionProperty;
 use RegexIterator;
+use App\Models\General\EmailTemplate;
 
 /**
  * Class MailEclipse.
@@ -75,27 +76,32 @@ class MailEclipse
      */
     public static function deleteTemplate($templateSlug): bool
     {
-        $template = self::getTemplates()
-            ->where('template_slug', $templateSlug)->first();
+       $template = self::getTemplates()->where('template_slug', $templateSlug)->first();
+            
+       if (!is_null($template)) {
+        // Delete the template record from the database
+        EmailTemplate::where('template_slug', $templateSlug)->delete();
 
-        if ($template !== null) {
-            self::saveTemplates(self::getTemplates()->reject(function ($value) use ($template) {
-                return $value->template_slug === $template->template_slug;
-            }));
-
+            // Paths to Blade views
             $template_view = self::VIEW_NAMESPACE.'::templates.'.$templateSlug;
             $template_plaintext_view = $template_view.'_plain_text';
 
+            // Delete Blade view files if they exist
             if (View::exists($template_view)) {
-                unlink(View($template_view)->getPath());
-
-                // remove plain text template version when exists
-                if (View::exists($template_plaintext_view)) {
-                    unlink(View($template_plaintext_view)->getPath());
+                $viewPath = view($template_view)->getPath();
+                if (file_exists($viewPath)) {
+                    unlink($viewPath);
                 }
-
-                return true;
             }
+
+            if (View::exists($template_plaintext_view)) {
+                $plainTextPath = view($template_plaintext_view)->getPath();
+                if (file_exists($plainTextPath)) {
+                    unlink($plainTextPath);
+                }
+            }
+
+            return true;
         }
 
         return false;
@@ -104,20 +110,20 @@ class MailEclipse
     /**
      * @return string
      */
-    public static function getTemplatesFile()
-    {
-        $file = config('maileclipse.mailables_dir').'templates.json';
-        if (! file_exists($file)) {
-            if (! file_exists(config('maileclipse.mailables_dir'))) {
-                if (! mkdir($concurrentDirectory = config('maileclipse.mailables_dir')) && ! is_dir($concurrentDirectory)) {
-                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-                }
-            }
-            file_put_contents($file, '[]');
-        }
+    // public static function getTemplatesFile()
+    // {
+    //     $file = config('maileclipse.mailables_dir').'templates.json';
+    //     if (! file_exists($file)) {
+    //         if (! file_exists(config('maileclipse.mailables_dir'))) {
+    //             if (! mkdir($concurrentDirectory = config('maileclipse.mailables_dir')) && ! is_dir($concurrentDirectory)) {
+    //                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+    //             }
+    //         }
+    //         file_put_contents($file, '[]');
+    //     }
 
-        return $file;
-    }
+    //     return $file;
+    // }
 
     /**
      * Save templates to templates.json file.
@@ -126,7 +132,19 @@ class MailEclipse
      */
     public static function saveTemplates(Collection $templates): void
     {
-        file_put_contents(self::getTemplatesFile(), $templates->toJson());
+        foreach ($templates as $template) {
+            EmailTemplate::updateOrInsert(
+                ['template_slug' => $template['template_slug']],
+                [
+                    'template_name' => $template['template_name'] ?? '',
+                    'template_description' => $template['template_description'] ?? '',
+                    'template_type' => $template['template_type'] ?? '',
+                    'template_view_name' => $template['template_view_name'] ?? '',
+                    'template_skeleton' => $template['template_skeleton'] ?? '',
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 
     /**
@@ -138,7 +156,7 @@ class MailEclipse
         $template = self::getTemplates()
             ->where('template_slug', $request->templateslug)->first();
 
-        if ($template !== null) {
+        if (! is_null($template)) {
             if (! preg_match("/^[a-zA-Z0-9-_\s]+$/", $request->title)) {
                 return response()->json([
                     'status' => 'failed',
@@ -146,9 +164,13 @@ class MailEclipse
                 ]);
             }
 
-            $templateName = Str::camel(preg_replace('/\s+/', '_', $request->title));
+            $templatename = Str::camel(preg_replace('/\s+/', '_', $request->title));
 
-            if (self::getTemplates()->contains('template_slug', '=', $templateName)) {
+            // check if not already exists on db
+            //
+            //
+
+            if (self::getTemplates()->contains('template_slug', '=', $templatename)) {
                 return response()->json([
 
                     'status' => 'failed',
@@ -158,36 +180,35 @@ class MailEclipse
             }
 
             // Update
-            $oldForm = self::getTemplates()->reject(function ($value) use ($template) {
-                return $value->template_slug === $template->template_slug;
-            });
-            $newForm = array_merge($oldForm->toArray(), [array_merge((array) $template, [
-                'template_slug' => $templateName,
+                EmailTemplate::where('template_slug', $template->template_slug)->update([
+                'template_slug' => $templatename,
                 'template_name' => $request->title,
                 'template_description' => $request->description,
-            ])]);
+                'updated_at' => now(),
+            ]);
 
-            self::saveTemplates(collect($newForm));
 
-            $template_view = self::VIEW_NAMESPACE.'::templates.'.$request->templateslug;
+            $template_view = self::$view_namespace.'::templates.'.$request->templateslug;
             $template_plaintext_view = $template_view.'_plain_text';
 
             if (View::exists($template_view)) {
                 $viewPath = View($template_view)->getPath();
 
-                rename($viewPath, dirname($viewPath)."/{$templateName}.blade.php");
+                rename($viewPath, dirname($viewPath)."/{$templatename}.blade.php");
 
                 if (View::exists($template_plaintext_view)) {
                     $textViewPath = View($template_plaintext_view)->getPath();
 
-                    rename($textViewPath, dirname($viewPath)."/{$templateName}_plain_text.blade.php");
+                    rename($textViewPath, dirname($viewPath)."/{$templatename}_plain_text.blade.php");
                 }
             }
 
             return response()->json([
+
                 'status' => 'ok',
                 'message' => 'Updated Successfully',
-                'template_url' => route('viewTemplate', ['templatename' => $templateName]),
+                'template_url' => route('viewTemplate', ['templatename' => $templatename]),
+
             ]);
         }
     }
@@ -199,30 +220,23 @@ class MailEclipse
     public static function getTemplate($templateSlug): ?Collection
     {
         $template = self::getTemplates()->where('template_slug', $templateSlug)->first();
-
+        
         if ($template !== null) {
-            $template_view = self::VIEW_NAMESPACE.'::templates.'.$template->template_slug;
-            $template_plaintext_view = $template_view.'_plain_text';
-
-            if (View::exists($template_view)) {
-                $viewPath = View($template_view)->getPath();
-                $textViewPath = View($template_plaintext_view)->getPath();
-
-                /** @var Collection $templateData */
-                $templateData = collect([
-                    'template' => Replacer::toEditor(file_get_contents($viewPath)),
-                    'plain_text' => View::exists($template_plaintext_view) ? file_get_contents($textViewPath) : '',
-                    'slug' => $template->template_slug,
-                    'name' => $template->template_name,
-                    'description' => $template->template_description,
-                    'template_type' => $template->template_type,
-                    'template_view_name' => $template->template_view_name,
-                    'template_skeleton' => $template->template_skeleton,
-                ]);
-
-                return $templateData;
-            }
+            $templateData = collect([
+                'template' => self::templateComponentReplace($template->template, true),
+                'plain_text' => $template->template_plain_text ?? '',
+                'slug' => $template->template_slug,
+                'name' => $template->template_name,
+                'description' => $template->template_description,
+                'template_type' => $template->template_type,
+                'template_view_name' => $template->template_view_name,
+                'template_skeleton' => $template->template_skeleton,
+            ]);
+        
+            return $templateData;
         }
+
+        return null;
     }
 
     /**
@@ -232,7 +246,9 @@ class MailEclipse
      */
     public static function getTemplates(): Collection
     {
-        return collect(json_decode(file_get_contents(self::getTemplatesFile())));
+        $template =  collect(EmailTemplate::get());
+
+        return $template;
     }
 
     /**
@@ -243,46 +259,45 @@ class MailEclipse
     {
         if (! preg_match("/^[a-zA-Z0-9-_\s]+$/", $request->template_name)) {
             return response()->json([
+
                 'status' => 'error',
                 'message' => 'Template name not valid',
 
             ]);
         }
 
-        $view = self::VIEW_NAMESPACE.'::templates.'.$request->template_name;
-        $templateName = Str::camel(preg_replace('/\s+/', '_', $request->template_name));
+        $templatename = Str::camel(preg_replace('/\s+/', '_', $request->template_name));
+        $existing = self::getTemplates()->where('template_slug', $templatename)
+        ->where('lang' ,$request->lang)->isNotEmpty();
 
-        if (! view()->exists($view) && ! self::getTemplates()->contains('template_slug', '=', $templateName)) {
-            self::saveTemplates(self::getTemplates()
-                ->push([
-                    'template_name' => $request->template_name,
-                    'template_slug' => $templateName,
-                    'template_description' => $request->template_description,
-                    'template_type' => $request->template_type,
-                    'template_view_name' => $request->template_view_name,
-                    'template_skeleton' => $request->template_skeleton,
-                ]));
 
-            $dir = resource_path('views/vendor/'.self::VIEW_NAMESPACE.'/templates');
-
-            if (! File::isDirectory($dir)) {
-                File::makeDirectory($dir, 0755, true);
-            }
-
-            file_put_contents($dir."/{$templateName}.blade.php", Replacer::toBlade($request->content));
-
-            file_put_contents($dir."/{$templateName}_plain_text.blade.php", $request->plain_text);
+          if (! $existing) {
+           EmailTemplate::insert([
+            'template_name' => $request->template_name,
+            'template_slug' => $templatename,
+            'template_description' => $request->template_description,
+            'template_type' => $request->template_type,
+            'template_view_name' => $request->template_view_name,
+            'template_skeleton' => $request->template_skeleton,
+            'template' => $request->content,
+            'lang' => $request->lang,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
             return response()->json([
+
                 'status' => 'ok',
                 'message' => 'Template created<br> <small>Reloading...<small>',
-                'template_url' => route('viewTemplate', ['templatename' => $templateName]),
+                'template_url' => route('viewTemplate', ['templatename' => $templatename]),
+
             ]);
         }
 
         return response()->json([
+
             'status' => 'error',
-            'message' => 'Template not created',
+            'message' => __('Template name already exists'),
 
         ]);
     }
