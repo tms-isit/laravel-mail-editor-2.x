@@ -5,6 +5,7 @@ namespace Qoraiche\MailEclipse;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Qoraiche\MailEclipse\Command\VendorPublishCommand;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class MailEclipseServiceProvider extends ServiceProvider
 {
