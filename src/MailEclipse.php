@@ -223,7 +223,7 @@ class MailEclipse
         
         if ($template !== null) {
             $templateData = collect([
-                'template' => self::templateComponentReplace($template->template, true),
+                'template' => Replacer::toEditor($template->template),
                 'plain_text' => $template->template_plain_text ?? '',
                 'slug' => $template->template_slug,
                 'name' => $template->template_name,

@@ -41,8 +41,6 @@
                                         {{ ucfirst($template['template_view_name']) }}</p>
                                     <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.details') }}:</b>
                                         {{ ucfirst($template['template_skeleton']) }}</p>
-                                    <p class="text-primary edit-template" style="cursor:pointer;"><i
-                                            class="fas fa-edit"></i> {{ __('maileclipse::template.edit details') }}</p>
                                     <p class="text-danger delete-template" style="cursor:pointer;"><i
                                             class="fas fa-trash "></i> {{ __('maileclipse::template.delete template') }}</p>
                                 </div>
@@ -100,8 +98,6 @@
                                         {{ ucfirst($template['template_view_name']) }}</p>
                                     <p style="font-size: .9em;"><b class="font-weight-sixhundred">{{ __('maileclipse::template.details') }}:</b>
                                         {{ ucfirst($template['template_skeleton']) }}</p>
-                                    <p class="text-primary edit-template" style="cursor:pointer;"><i
-                                            class="fas fa-edit"></i> {{ __('maileclipse::template.edit details') }}</p>
                                     <p class="text-danger delete-template" style="cursor:pointer;"><i
                                             class="fas fa-trash "></i> {{ __('maileclipse::template.delete template') }}</p>
                         </div>

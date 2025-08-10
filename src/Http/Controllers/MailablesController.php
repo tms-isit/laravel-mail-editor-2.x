@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
 use Qoraiche\MailEclipse\Facades\MailEclipse;
+use App\Models\General\EmailTemplate;
 
 class MailablesController extends Controller
 {
